@@ -4,9 +4,9 @@
  * because of which fake timers leak into all the tests in the same file,
  * while Axe doen't work when using fake timers.
  **/
-import { createElement } from 'lwc';
-import ProductFilter from 'c/productFilter';
-import { getPicklistValues } from 'lightning/uiObjectInfoApi';
+import { createElement } from "lwc";
+import ProductFilter from "c/productFilter";
+import { getPicklistValues } from "lightning/uiObjectInfoApi";
 
 /*
  * Import a snapshot of getPicklistValues' response for functional verification. This eliminates
@@ -22,36 +22,36 @@ import { getPicklistValues } from 'lightning/uiObjectInfoApi';
  * Community-provided instructions for access Salesforce REST resources is at
  * https://blog.mkorman.uk/using-postman-to-explore-salesforce-restful-web-services/
  */
-const mockGetPicklistValues = require('./data/getPicklistValues.json');
+const mockGetPicklistValues = require("./data/getPicklistValues.json");
 
-describe('c-product-filter-accessibility', () => {
-    afterEach(() => {
-        // The jsdom instance is shared across test cases in a single file so reset the DOM
-        while (document.body.firstChild) {
-            document.body.removeChild(document.body.firstChild);
-        }
-        // Prevent data saved on mocks from leaking between tests
-        jest.clearAllMocks();
+describe("c-product-filter-accessibility", () => {
+  afterEach(() => {
+    // The jsdom instance is shared across test cases in a single file so reset the DOM
+    while (document.body.firstChild) {
+      document.body.removeChild(document.body.firstChild);
+    }
+    // Prevent data saved on mocks from leaking between tests
+    jest.clearAllMocks();
+  });
+  it("is accessible when picklist values returned", () => {
+    const element = createElement("c-product-filter", {
+      is: ProductFilter,
     });
-    it('is accessible when picklist values returned', () => {
-        const element = createElement('c-product-filter', {
-            is: ProductFilter
-        });
-        document.body.appendChild(element);
+    document.body.appendChild(element);
 
-        getPicklistValues.emit(mockGetPicklistValues);
+    getPicklistValues.emit(mockGetPicklistValues);
 
-        return Promise.resolve().then(() => expect(element).toBeAccessible());
+    return Promise.resolve().then(() => expect(element).toBeAccessible());
+  });
+
+  it("is accessible when error returned", () => {
+    const element = createElement("c-product-filter", {
+      is: ProductFilter,
     });
+    document.body.appendChild(element);
 
-    it('is accessible when error returned', () => {
-        const element = createElement('c-product-filter', {
-            is: ProductFilter
-        });
-        document.body.appendChild(element);
+    getPicklistValues.error();
 
-        getPicklistValues.error();
-
-        return Promise.resolve().then(() => expect(element).toBeAccessible());
-    });
+    return Promise.resolve().then(() => expect(element).toBeAccessible());
+  });
 });
